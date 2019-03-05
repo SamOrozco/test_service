@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/kardianos/service"
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	"log"
 	"net/http"
 )
@@ -11,21 +10,18 @@ import (
 type Prog struct {
 }
 
-func (Prog) Start(s service.Service) error {
+func (prog Prog) Start(s service.Service) error {
 	// Echo instance
+	println("Starting this service")
 	e := echo.New()
-
-	// Middleware
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-
 	// Routes
 	e.GET("/", handleReq)
-
-	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
+	go func() {
+		e.Logger.Fatal(e.Start(":9008"))
+	}()
 	return nil
 }
+
 
 func handleReq(ctx echo.Context) error {
 	return ctx.String(http.StatusOK, "Hello, World!")
@@ -38,7 +34,7 @@ func (Prog) Stop(s service.Service) error {
 
 func main() {
 	svcConfig := &service.Config{
-		Name:        "GoServiceExampleSimple",
+		Name:        "TestService66",
 		DisplayName: "Go Service Example",
 		Description: "This is an example Go service.",
 	}
@@ -52,4 +48,5 @@ func main() {
 		panic(err)
 	}
 
+	_ = s.Run()
 }
